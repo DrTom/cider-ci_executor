@@ -1,2 +1,0 @@
-domina-ci-executor
-==================
