@@ -42,17 +42,16 @@
     (.setExecutable script-file true)
     script-file))
 
-(defn ^:private prepare-env-variables [{ex-uuid :ci_execution_id trial-uuid :ci_trial_id task-uuid :ci_task_id :as params}]
+(defn ^:private prepare-env-variables [{ex-uuid :cider_ci_execution_id 
+                                        trial-uuid :cider_ci_trial_id 
+                                        task-uuid :cider_ci_task_id :as params}]
   ; TODO pull-up the complete params here; there is some duplication 
   (logging/debug "prepare-env-variables :cider-ci_execution_id " ex-uuid ":cider-ci_trial_id " trial-uuid " params: " params)
   (let [res (util/upper-case-keys 
               (util/rubyize-keys
                  (conj params 
                        (:environment_variables @conf)
-                       {:ci_execution_int (util/uuid-to-short ex-uuid)
-                        :ci_task_int (util/uuid-to-short task-uuid)
-                        :ci_trial_int (util/uuid-to-short trial-uuid)
-                        })))]
+                       { })))]
                  (logging/debug "prepare-env-variables res: " res)
     res))
 

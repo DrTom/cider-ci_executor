@@ -49,7 +49,7 @@
     (let [working-dir (prepare-and-create-working-dir {:git_url (:test-repo-path @shared/conf) 
                                                       :repository_id  "test_repo"
                                                       :git_commit_id "e4e1e98473b51b5539a16741da717f4e2ae33965"
-                                                      :cider-ci_trial_id (str (java.util.UUID/randomUUID)) 
+                                                      :trial_id (str (java.util.UUID/randomUUID)) 
                                                       })]
       (testing "it clones the test_repo"
         (let [res (shell/sh "git" "log" "-n" "1" "--format='%H'" "e4e1e98473b51b5539a16741da717f4e2ae33965" 

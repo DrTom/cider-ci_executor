@@ -38,7 +38,7 @@
   (try 
     (let [trial-parameters  (clojure.walk/keywordize-keys (:json-params request))]
       (logging/debug "trial-parameters" trial-parameters)
-      (when-not (:ci_trial_id trial-parameters) (throw (IllegalStateException. ":cider-ci_trial_uuid parameter must be present")))
+      (when-not (:trial_id trial-parameters) (throw (IllegalStateException. ":trial_id parameter must be present")))
       (when-not (:patch_url trial-parameters) (throw (IllegalStateException. ":patch_url parameter must be present")))
       (future (trial/execute trial-parameters))
       {:status 204})

@@ -104,12 +104,11 @@
 
 (defn prepare-and-create-working-dir [params]
   (logging/debug "prepare-and-create-working-dir" params)
-  (let [working-dir-id (:ci_trial_id params)]
+  (let [working-dir-id (:trial_id params)]
     (when-not (and working-dir-id (not (clojure.string/blank? working-dir-id)))
       (throw (java.lang.IllegalArgumentException. "invalid arguments of prepare-and-create-working-dir" )))
     (let [repository-path (serialized-initialize-or-update-if-required 
-                            (:git_url params) (:repository_id params) (:git_commit_id params))
-          working-dir (str (:working-dir @shared/conf) (File/separator) working-dir-id) ]
+                            (:git_url params) (:repository_id params) (:git_commit_id params)) working-dir (str (:working-dir @shared/conf) (File/separator) working-dir-id) ]
       (clone-to-working-dir repository-path (:git_commit_id params) working-dir)
       (let [submodules (:git_submodules params)]
         (logging/debug "SUBMODULES " submodules)

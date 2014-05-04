@@ -48,7 +48,7 @@
                              :started_at :finished_at])})))))
 
 (defn memoized-executor-exec [script]
-  (let [my-agent (script-exec-agent (:cider-ci_execution_id script))]
+  (let [my-agent (script-exec-agent (:execution_id script))]
     (send-off my-agent use-memoized-or-execute script)
     (await my-agent)
     (@my-agent (:name script))))

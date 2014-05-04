@@ -54,8 +54,8 @@
                             (atom (conj script-params 
                                         (select-keys @params-atom
                                                      [:environment_variables 
-                                                      :cider-ci_execution_id 
-                                                      :cider-ci_trial_id 
+                                                      :execution_id 
+                                                      :trial_id 
                                                       :working_dir ]))))
                           initial-scripts)]
     (swap! params-atom #(conj %1 {:scripts %2}) script-atoms)
@@ -72,7 +72,7 @@
   "Creates a new trial, stores it in trials under it's id and returns the
   trial"
   [params]
-  (let [id (:cider-ci_trial_id params)]
+  (let [id (:trial_id params)]
     (swap! trials-atom 
            (fn [trials params id]
              (conj trials {id {:params-atom (atom  params)
@@ -125,8 +125,7 @@
 
 
 (defn execute [params] 
-  (logging/debug execute [params])
-  (logging/info execute params)
+  (logging/info execute [params])
   (let [started-at (time/now)
         trial (create-trial (conj params {:started_at started-at}))
         report-agent (:report-agent trial)
