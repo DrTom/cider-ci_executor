@@ -33,7 +33,7 @@
 (def defaul-system-interpreter
   (condp = (clojure.string/lower-case (System/getProperty "os.name"))
     "windows" ["cmd.exe" "/c"]
-    ["bash" "-l"]))
+    ["bash" "--login" "-i" ]))
 
 (defn prepare-script-file [script]
   (let [script-file (File/createTempFile "cider-ci_", ".script")]
@@ -70,6 +70,9 @@
           script-file (prepare-script-file (:body params))  
           command (conj interpreter (.getAbsolutePath script-file))
           exec-res (deref (commons-exec/sh command 
+                                            ; add (System/getenv) to see inherited env vars ; either is bad: 
+                                            ;   without: we loose job control
+                                            ;   with: wee see a bunch vars from starting the executor
                                            {:env (conj {} (System/getenv) env-variables)
                                             :dir working-dir  
                                             :watchdog (* 1000 timeout)}))]
