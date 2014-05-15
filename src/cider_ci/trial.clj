@@ -20,6 +20,7 @@
     [cider-ci.script :as script]
     [cider-ci.util :as util]
     [cider-ci.with :as with]
+    [robert.hooke :as hooke]
     )
   (:use 
     [clj-logging-config.log4j :only (set-logger!)]
@@ -64,7 +65,16 @@
 
 
 (defonce ^:private trials-atom (atom {}))
-(defn get-trials [] @trials-atom)
+
+(defn get-trials [] 
+  "Retrieves the received and not yet discarded trials"
+  (flatten (map (fn [t] [(:params-atom (second t))])
+       (seq @trials-atom))))
+
+(defn get-trial [id]
+  (when-let [trial (@trials-atom id)]
+    (:params-atom trial)))
+
 
 ;(clojure.pprint/pprint trials-atom)
  
@@ -181,3 +191,4 @@
       (finally trial))
     trial))
 
+;(hooke/add-hook #'get-trial #'util/logit)

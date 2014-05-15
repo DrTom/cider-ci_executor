@@ -131,3 +131,10 @@
     ))
 
 
+(defn logit [f & args]
+  (logging/info f " ARGS: " args)
+  (let [res (apply f args)]
+    (logging/info f " RESULT: " res)
+    res ))
+
+

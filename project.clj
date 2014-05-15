@@ -26,6 +26,7 @@
                  [ring "1.1.8"] 
                  [ring/ring-jetty-adapter "1.1.8"]
                  [ring/ring-json "0.2.0"]
+                 [robert/hooke "1.3.0"]
                  ]
   :aot [cider-ci.main]
   :main cider-ci.main 

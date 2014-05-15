@@ -49,15 +49,26 @@
 
 (defn get-trials []
   (let [trials (trial/get-trials)]
-     {:status 201 
-      :headers {"Content-Type" "application/json"}
-      :body (json/write-str trials)})) 
+    {:status 200 
+     :headers {"Content-Type" "application/json"}
+     :body (json/write-str trials)}
+    )) 
+
+(defn get-trial [id]
+  (logging/debug [get-trial id])
+  (if-let [trial (trial/get-trial id)]
+    {:status 200 
+     :headers {"Content-Type" "application/json"}
+     :body (json/write-str trial)}
+    {:status 404}
+    ))
 
 (compojure.core/defroutes app-routes
   (compojure.core/GET "/hello" [] (say-hello))
   (compojure.core/POST "/ping" [] (ping))
   (compojure.core/POST "/execute" req (execute req))
-  (compojure.core/GET "/trials" [] (get-trials)))
+  (compojure.core/GET "/trials" [] (get-trials))
+  (compojure.core/GET "/trials/:id" [id] (get-trial id)))
 
 (def app
   ( -> (compojure.handler/site app-routes)
