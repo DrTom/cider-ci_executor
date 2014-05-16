@@ -33,7 +33,7 @@
 (def defaul-system-interpreter
   (condp = (clojure.string/lower-case (System/getProperty "os.name"))
     "windows" ["cmd.exe" "/c"]
-    ["bash" "-l"]))
+    ["bash"  "--login" ]))
 
 (defn prepare-script-file [script]
   (let [script-file (File/createTempFile "cider-ci_", ".script")]
@@ -55,6 +55,19 @@
                  (logging/debug "prepare-env-variables res: " res)
     res))
 
+
+(defn commons-exec-sh [command env-variables working-dir timeout]
+  (commons-exec/sh command 
+                   ; add (System/getenv) to see inherited env vars ; either is bad: 
+                   ;   without: we loose job control
+                   ;   with: wee see a bunch vars from starting the executor
+                   {:env (conj 
+                           {} 
+                           (select-keys (System/getenv) ["HOME" "USER"])
+                           env-variables)
+                    :dir working-dir  
+                    :watchdog (* 1000 timeout)}))
+
 (defn exec-script-for-params [params]
 
   (logging/info (str "exec-script-for-params" (select-keys params [:name])))
@@ -69,10 +82,7 @@
           interpreter (or (:interpreter params) defaul-system-interpreter)
           script-file (prepare-script-file (:body params))  
           command (conj interpreter (.getAbsolutePath script-file))
-          exec-res (deref (commons-exec/sh command 
-                                           {:env (conj {} (System/getenv) env-variables)
-                                            :dir working-dir  
-                                            :watchdog (* 1000 timeout)}))]
+          exec-res (deref (commons-exec-sh command env-variables working-dir timeout))]
       (conj params 
             started 
             {:finished_at (time/now)
@@ -106,10 +116,7 @@
           interpreter (or (:interpreter params) defaul-system-interpreter)
           script-file (prepare-script-file (:body params))  
           command (conj interpreter (.getAbsolutePath script-file))
-          exec-promise (commons-exec/sh command 
-                                        {:env (conj {} (System/getenv) env-variables)
-                                         :dir working-dir  
-                                         :watchdog watchdog})]
+          exec-promise (commons-exec-sh command env-variables working-dir timeout) ]
       (conj params 
             started 
             {:finished_at (time/now)
