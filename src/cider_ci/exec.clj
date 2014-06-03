@@ -58,12 +58,19 @@
 
 (defn commons-exec-sh [command env-variables working-dir timeout]
   (commons-exec/sh command 
-                   ; add (System/getenv) to see inherited env vars ; either is bad: 
-                   ;   without: we loose job control
-                   ;   with: wee see a bunch vars from starting the executor
+                   ; try to blacklist some vars which are set during executor startup
+                   ; and visible through (System/getenv) 
                    {:env (conj 
-                           {} 
-                           (select-keys (System/getenv) ["HOME" "USER"])
+                           (dissoc (conj {} (System/getenv))
+                                   "CLASSPATH" 
+                                   "JAVA_CMD"
+                                   "JVM_OPTS"
+                                   "LEIN_HOME"
+                                   "LEIN_JAVA_CMD"
+                                   "LEIN_JVM_OPTS"
+                                   "LEIN_VERSION"
+                                   "TRAMPOLINE_FILE" 
+                                   )
                            env-variables)
                     :dir working-dir  
                     :watchdog (* 1000 timeout)}))
@@ -75,7 +82,8 @@
   (try
     (let [started {:started_at (time/now)}
           working-dir (:working_dir params)
-          env-variables (prepare-env-variables (conj {:cider-ci_working_dir working-dir} 
+          env-variables (prepare-env-variables (conj {} 
+                                                     {:cider-ci_working_dir working-dir} 
                                                      (or (:ports params) {}) 
                                                      (:environment_variables params)))
           timeout (or (:timeout params) 200)
