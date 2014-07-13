@@ -1,11 +1,3 @@
-Cider-CI Executor
-==================
+# Moved
 
-Part of [Cider-CI](https://github.com/DrTom/cider-ci). 
-
-License and copyright
----------------------
-
-Copyright (C) 2013, 2014 Dr. Thomas Schank  (DrTom@schank.ch, Thomas.Schank@algocon.ch)
-Licensed under the terms of the GNU Affero General Public License v3.
-See the "LICENSE.txt" file provided with this software.
+Go to [Cider-CI at Github](https://github.com/cider-ci/cider-ci).
